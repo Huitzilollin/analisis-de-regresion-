@@ -1,0 +1,43 @@
+ install.packages ( "coche")
+ + Require (auto)
+ Base1 <- hoja.de.datos (econ, estat)
+ Base1 $ ajuste.model <-fitted (modelo) #valores ajustados es Y (gorrito)
+ Base1 $ residuales.model <-residuals (modelo) ## residuos del modelo es Y-Y = eí
+ Base1 $ rsudent.model <- rstudent (modelo) #residuos estudentizados
+ hapiro.test (Base1 $ rstudent.model)
+ ### TENEMOS UN vaue de 0.8172 no se rechaza la hipotesis
+  Qqnorm (Base1 $ rstudent.model, principal = "normal (0,1)")
+install.packages ( "lmtest")
+ + Require (lmtest)
+ Bptest (modelo)
+ #### En Esta prueba ESPERAMOS Que Haya homogeniedad de la varianza
+ # SI ho heno homogeniedad
+# H1 o heno homegeniedad en la varianza
+### E la prueba bptest obtenemos el valor p de la ONU de 0,6108
+  ## Por lo tant se rechaza la hipotesis nula
+  ### Es decr Acepta la ONU el 95% de confianza la H0
+ Para ESO DEBEMOS Tener un pvalue Mayor de .05
+#############################################
+ #### Prueba de autocorrelacion o autoindependencia
+ ### En Este Caso se utilizació Durbin Watson
+ + Require (auto)
+  Dwtest (modelo, alternativa = "two.sided")
+  ### H0 No hay Una Correlación en los residuos
+  ## Si Hay autocorrelacion de los residuos
+ ##### La prueba Durbin Watson géneros ONU m resultado de p 0,9142 VAE
+  #### 3 ## por Lo que no se rechza la hipotesis nula
+  ### TENEMOS valor p de la ONU alcalde una .05, o heno autocorrelacion de Residuos
+  #### Durbin Watson SI es6ta en el Rango de 1.5 a 2.4 sin cor de residuos
+ #### Ahora ESTO comproaremos de Manera grafica
+ + Parcela (Base1 $ residuales.model, pch = 07, ylab = "residuales", xlab = "en")
+ Abline (h = cor (Base1 $ estat, Base1 $ econ))
+### En Este Caso ningún patrón de heno
+ ### Por O que confirmamos Que No relacion heno
+ ### Definimos limites
+ Limbase1 <- ss (min (Base1 $ ECON), max (Base1 $ econ), longitud = 10)
+ Limbase1 <- hoja.de.datos (limbase1)
+ imbasep <- predict.lm (modelo, limbase1, intervalo = "predicción", se.fit = TRUE, data = Base1)
+ Cabeza ($ limbasep ajuste) ### se generan limites
+  #### Párr dibujar los limites
+ atplot (limbase1, limbasep $ ajuste, type = "l", XLab = "ingresos", ylab = "estatura")
+ #### Tarea etiquetar Datos
