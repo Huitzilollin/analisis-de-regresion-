@@ -1,0 +1,105 @@
+######MODELO DE REGRESION SIMPLE#####
+capa<- c(4330,5500,5500,4700,5200,5500,4700,5500,5800,5000) #independiente (x2)
+calidad<- c(2,3,4,3,4,4,4,5,5,5)#independiente (x1)
+precio<- c(190,219,249,249,250,340,289,395,439,525)
+
+mochil<- data.frame(precio,capa,calidad) 
+
+mochil1<- mochil[c(-1,-7,-10),]
+mochil2<- mochil[,-2]
+
+##primero aplicamos una correlación
+cor(mochil1,use="everything", method="pearson")
+##observamos que las variables tienen correlaciones diversas
+## aplicamos modelo
+help(lm)
+modmo<- lm(precio~calidad+capa)
+summary(modmo)
+#se revisa la R2 ajustada por ser un mRM tenemos una r2 ajustada de .70 
+#lo que implica que la recta de regresión explica en 70% la variabilidad
+#del modelo revisando el valor F y p value tenemos que si cumple con los 
+#criterios de un buen ajuste (F>1 y PVALUE  <.05) con estos datos podemos
+#mencionar que estamos ante un buen modelo por que se pasa al diagnostico.
+#El diagnostico se realiza para poder generalizar los resultados del modelo
+#a partir de la revisión de los supuestos.
+
+#lo primero que se hace en un mRM es observar gráficamente los supuestos
+#en primer lugar se contrastan los valores residuales contra los valores 
+#ajustados se realiza con la función "PLOT"  y el argumento which=1
+#recuerden que el pch cambia la figura de las observaciones
+plot(modmo, which=1, pch=3)
+#aqui esperamos que los residuos se distribuyan sin patron
+#una tendencia en la variabilidad de los recursos suguiere que la varianza
+#esta relacionada con la media, violando el supuesto de la varianza constante.
+
+####supuesto de normalidad#######
+plot(modmo, which=2, pch=3)
+#en este caso esperamos que los residuos tipificados esten alrededor de la linea
+#se observa que si hay distribución normal
+
+####tercer supuesto####
+#los residuos estan estandarizados por sus desviaciones estandar estimadas.
+plot(modmo, which=3, pch=3)
+#aqui podemos ver si los residuos se distribuyen constantes en los valores ajustados 
+#una gráfica sin patrón observable
+
+#####cuarto supuesto####
+plot(modmo, which=5, pch=3)
+#expone la importancia de cada observación en el modelo en esta distancia el gráfico 
+#nos muestra las observaciones que podrán impactar en el modelo, por lo que se 
+#suguiere eliminarlas
+
+#############
+#despues de analizar gráficamente se aplican pruebas para confirmar que el mRM si
+#cumple con los supuestos, para aplicar estas pruebas se generan los valores ajustados,
+#residuales y los estandarizados
+mochil$ajustados <- fitted(modmo)
+mochil$res <- residuals(modmo)
+mochil$rstud <- rstudent(modmo) ####para ver los errores residuales
+
+#######prueba de normalidad######
+###paqueteria lmtest
+install.packages("lmtest")
+ks.test(mochil$rstud, "pnorm")
+require(lmtest)
+### se plantea prueba de hipotesis y se espera un p value mayor a .05 si tenemos
+#una p value mayor a .05 no se rechaza la Ho y se acepta que hay normalidad
+#en este caso el modelo pasa la prueda de bondad de normalidad.
+##### a segunda prueba que se hace es la homogeneidad de varianzas y esta prueba
+#se realiza con la función bptest
+bptest(modmo,studentize=FALSE, data=mochil)
+###tenemos un p value mayor a .05 no se rechaza la H y se acepta que hay normalidad 
+#la prueba durdin watson nos ayuda en la autocorrelacion dw()
+dwtest(modmo, alternative="two.sied", data=mochil)
+#en esta prueba hay dos formas para comprobar 
+##1) el p value mayor a .05
+##2) el valor de durbin watson (rango aceptable 1.5 a 2.5)
+##hasta aqui podriamos confirmar que no hay correlación entre los residuos
+#con estas pruebas ya se confirman que tenemos un modelo con buen ajuste. Sin embargo
+#hay que revisar los casos atipicos..... para los atipicos se usa la libreria car
+install.packages("car")
+require(car)
+outliertest(modmo)
+###una vez que observamos los casos atipicos procedemos a conocer la influencia de
+#estos casos en el modelo para obsevar la influencia se utiliza la función 
+#influence.measures()
+influ <- influence.measures(modmo)
+summary(influ)
+influencePlot(modmo)
+#en la primera columna se obseva los casos mas influyentes que en este modelo son 1.2 y 10 
+#las columnas que hacen referencia a dfb nos indican las influencia de los coeficientes
+#del modelo, las columnas que nos presentan con mayor interes son las cook.d y hat que nos
+#exponen con mayor claridad la influencia el cook.d es la distancia de cook y entre mas cercano
+#a 1 hay mayor influencia de la observacion, en este caso la obs 10 es a que tiene mayor
+#distancia de cook, en esta distancia valores .....
+#ademas estas pruebas se hace el analisis gráfico de los casos influyentes para este analisis
+#tenemos la funcion influencepot().... se requiere la libreria car, el analisis de este gráfico
+#se realiza con base en el tamaño de las circunferencias que arroja es decir a mayor 
+#circunferencias el caso tiene mayor influencia.
+#gráfica de distancia de cook.d se requiere de la libreria faraway
+install.packages("stats")
+require(faraway)
+cooks.distance(modmo)
+dc<- cooks.distance(modmo)
+etiqueta<- rownames(mochil)
+halfnorm(dc,3, etiqueta)
