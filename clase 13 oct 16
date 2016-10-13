@@ -1,0 +1,32 @@
+corredor<- c( "wall st", "etrade1", "etrade2", "pre trade", "track", "water house", "brown", "br america", 
+              "merrill lynch","strong funds")
+operacion <- c(3.7, 3.4, 2.5, 4.8, 4, 3, 2.7, 1.7, 2.2, 1.4)
+uso <- c(4.5, 3, 4, 3.7, 3.5, 3, 2.5, 3.5, 2.7, 3.6)
+gama <- c(4.8, 4.2, 4, 3.4, 3.2, 4.6, 3.3, 3.1, 3, 2.5)
+estrellas <- c(4, 3.5, 3.5, 3.5, 3.5, 3.5, 3, 3, 2.5, 2)
+bolsa <- dat.frame (estrellas, operacion, uso, gama)
+#A) Determine la ecuación de regresión estimada que se puede usar para predecir el número de
+#estrellas dadas las evaluaciones a ejecución, facilidad de uso y gama de ofertas.
+mbolsa <- lm(estrella~operacion+uso+gama, data=bolsa)
+summary(mbolsa)
+#############prediccion
+inter <- seq(min(bolsa$uso), ,max(bolsa$uso), length=length(bolsa$uso))
+
+bolpred <- data.frame(gama=2, operacion=2, uso=inter)
+predi1 <- predict(mbolsa.bolpred,interval="prediction", se.fit =TRUE, data=bolsa
+head(predi1$fit)
+
+#detectar multicolinealidad en el modelo...
+#cuando un modelo tiene multicolinealidad en un MRM es cuando una variable independiente
+#es combinacion lineal de otra var independiente, es decir la multicolinealidad existe en un MRM
+#si hay una fuerte correlacion entre 2 o mas var independientes esto es cuando tengamos un coeficiente 
+#de correlacion sea 1 
+#para detectar esta colinealidad se estima el factor de inflacion de la varianza (VIF)
+#este factor se calcula con R a traves de la funcion vif()
+#para este calculo se recomiendan estos rangos
+#FIV =1 no correlacionados
+#1<FIV<5 moderadamente correlacionados
+#FIVE>5 a 10 altamente correlacionados
+install.packages("car")
+require(car)
+vif(mbolsa)
