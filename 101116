@@ -1,0 +1,26 @@
+setwd("c:\\users\\sala-c6.RTIC-c6-hp\\desktop")
+require(foreing)
+sdem215<- read.dbf("sdemt216.dbf")
+coe1t215<- read.dbf("coe1t126.dbf")
+coe2t215<- read.dbf("coe2t126.dbf")
+folio<- paste(sdem215$CD_A,sdem215$ENT,sdem215$CON,sdem215$V_SEL,sdem215$N_HOG,
+              sdem215$H_MUD,sdem215$N_REN)
+x<- data.frame(sdem215,folio)
+
+folio<- paste(coe1t215$CD_A,coe1t215$ENT,coe1t215$CON,coe1t215$V_SEL,coe1t215$N_HOG,
+              coe1t215$H_MUD,coe1t215$N_REN)
+x1<- data.frame(coe1t215,folio)
+
+folio<- paste(coe2t215$CD_A,coe2t215$ENT,coe2t215$CON,coe2t215$V_SEL,coe2t215$N_HOG,
+              coe2t215$H_MUD,coe2t215$N_REN)
+x2<- data.frame(coe2t215,folio)
+
+total<- merge(x,x1,by="folio",all.x=TRUE)
+enoetotal<- merge(total,x2,by="folio",all.x=TRUE)
+
+view(enoetotal)
+ls(x1)
+install.packages("questionr")
+require(questionr)
+wtd.table(enoetotal$sex,enoetotal$P1,weights=enoetotal$FAC.x)
+sum(wtd.table(enoetotal$eda.x,weights=enoetotal$fac.x))
