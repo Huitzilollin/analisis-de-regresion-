@@ -1,0 +1,23 @@
+install.packages("foreign")
+ library(foreign)
+ #Cargando la base completa
+ rural<- read.spss("C://Users//sala-c10//Desktop//solorural.sav")
+ rural1<-data.frame(rural)
+ rural2<-subset(rural1,rural1$eda==5|rural1$eda==6|rural1$eda==7|rural1$eda==8|rural1$eda==9|rural1$eda==10|rural1$eda==11|rural1$eda==12|rural1$eda==13|rural1$eda==14|rural1$eda==15|rural1$eda==16|rural1$eda==17)
+ #número de niños y niñas
+ #hombres mujeres total
+ #9302    8798    18100
+ rural3<-subset(rural2,rural$clase2==1)
+ summary(rural3$sex)
+ rural3$sex<-factor(rural3$sex,levels=c(1,2),labels=c("Hombres","Mujeres"))
+ #niños y niñas ocupados
+ #hombres mujeres total
+ #1414     474    1888
+ summary(rural3$Asiste)
+ #niños y niñas según asistencia escolar
+ #no asiste   si asiste    total
+ #848          1040        1888
+ summary(rural3$NoAsiste)
+ #si asiste   no asiste    total 
+ #1040         848         1888
+ #ocupados por grupos de edad
